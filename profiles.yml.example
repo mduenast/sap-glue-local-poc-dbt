@@ -1,0 +1,7 @@
+sap_glue_local_poc:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ./data/sap_glue_local_poc.duckdb
+      threads: 4

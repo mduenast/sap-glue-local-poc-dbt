@@ -1,0 +1,58 @@
+version: 2
+
+sources:
+  - name: sap_raw
+    description: Raw SAP-like tables loaded into DuckDB by the local lab repository.
+    schema: main
+    tables:
+      - name: raw_sap_mara
+        description: Material master records.
+        columns:
+          - name: matnr
+            description: Material number.
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_sap_kna1
+        description: Customer master records.
+        columns:
+          - name: kunnr
+            description: Customer number.
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_sap_vbak
+        description: Sales order header records.
+        columns:
+          - name: vbeln
+            description: Sales document number.
+            tests:
+              - not_null
+              - unique
+          - name: kunnr
+            description: Sold-to customer number.
+            tests:
+              - not_null
+
+      - name: raw_sap_vbap
+        description: Sales order item records.
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - vbeln
+                - posnr
+        columns:
+          - name: vbeln
+            description: Sales document number.
+            tests:
+              - not_null
+          - name: posnr
+            description: Sales document item number.
+            tests:
+              - not_null
+          - name: matnr
+            description: Material number.
+            tests:
+              - not_null

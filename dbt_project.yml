@@ -1,0 +1,24 @@
+name: sap_glue_local_poc
+version: "1.0.0"
+config-version: 2
+
+profile: sap_glue_local_poc
+
+model-paths: ["models"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+seed-paths: ["seeds"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  sap_glue_local_poc:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
