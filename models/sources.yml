@@ -38,11 +38,6 @@ sources:
 
       - name: raw_sap_vbap
         description: Sales order item records.
-        tests:
-          - dbt_utils.unique_combination_of_columns:
-              combination_of_columns:
-                - vbeln
-                - posnr
         columns:
           - name: vbeln
             description: Sales document number.

@@ -54,6 +54,7 @@ Puedes ejecutar dbt usando el perfil local:
 ```bash
 dbt debug --profiles-dir .
 dbt deps --profiles-dir .
+dbt parse --profiles-dir .
 dbt run --profiles-dir .
 dbt test --profiles-dir .
 ```
