@@ -2,7 +2,7 @@
 
 Capa mínima de transformación dbt para una prueba de concepto local con datos tipo SAP. Este repositorio contiene únicamente el proyecto dbt que modela tablas raw ya cargadas en una base de datos local DuckDB.
 
-El proyecto es genérico y apto para uso público. No incluye extractor, emulador de AWS, planificador, orquestador, configuración de Snowflake ni integración productiva.
+El proyecto es genérico y apto para uso público. No incluye extractor, emulador compatible con AWS Floci, planificador, orquestador, configuración de Snowflake ni integración productiva.
 
 ## Qué hace este proyecto
 

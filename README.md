@@ -2,7 +2,7 @@
 
 Minimal dbt transformation layer for a local SAP-like data extraction proof of concept. This repository contains only the dbt project that models raw tables already loaded into a local DuckDB database.
 
-This project is intentionally generic and public-safe. It does not include an extractor, AWS emulator, scheduler, orchestrator, Snowflake configuration, or any production integration.
+This project is intentionally generic and public-safe. It does not include an extractor, Floci AWS-compatible emulator, scheduler, orchestrator, Snowflake configuration, or any production integration.
 
 ## What this project does
 
