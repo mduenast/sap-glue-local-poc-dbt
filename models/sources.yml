@@ -6,39 +6,114 @@ sources:
     schema: main
     tables:
       - name: raw_sap_mara
-        description: Material master records.
+        description: Material master records. Material uniqueness is expected by client and material number.
         columns:
+          - name: mandt
+            description: SAP-like client identifier.
+            tests:
+              - not_null
           - name: matnr
             description: Material number.
             tests:
               - not_null
-              - unique
+          - name: mtart
+            description: Material type.
+          - name: matkl
+            description: Material group.
+          - name: meins
+            description: Base unit of measure.
+          - name: ersda
+            description: Material creation date.
+          - name: erdat
+            description: Record creation date.
+          - name: aedat
+            description: Record change date.
+          - name: _batch_id
+            description: Local ingestion batch identifier.
+          - name: _source_table
+            description: Original source table name.
+          - name: _loaded_at
+            description: Local load timestamp.
+          - name: _file_name
+            description: Local source file name.
 
       - name: raw_sap_kna1
-        description: Customer master records.
+        description: Customer master records. Customer uniqueness is expected by client and customer number.
         columns:
+          - name: mandt
+            description: SAP-like client identifier.
+            tests:
+              - not_null
           - name: kunnr
             description: Customer number.
             tests:
               - not_null
-              - unique
+          - name: name1
+            description: Customer name.
+          - name: land1
+            description: Country code.
+          - name: ort01
+            description: City.
+          - name: erdat
+            description: Record creation date.
+          - name: aedat
+            description: Record change date.
+          - name: _batch_id
+            description: Local ingestion batch identifier.
+          - name: _source_table
+            description: Original source table name.
+          - name: _loaded_at
+            description: Local load timestamp.
+          - name: _file_name
+            description: Local source file name.
 
       - name: raw_sap_vbak
-        description: Sales order header records.
+        description: Sales order header records. Header uniqueness is expected by client and sales document number.
         columns:
+          - name: mandt
+            description: SAP-like client identifier.
+            tests:
+              - not_null
           - name: vbeln
             description: Sales document number.
             tests:
               - not_null
-              - unique
           - name: kunnr
             description: Sold-to customer number.
             tests:
               - not_null
+          - name: audat
+            description: Sales order document date.
+          - name: auart
+            description: Sales document type.
+          - name: vkorg
+            description: Sales organization.
+          - name: erdat
+            description: Record creation date.
+          - name: aedat
+            description: Record change date.
+          - name: waers
+            description: Document currency.
+          - name: waerk
+            description: Header currency.
+          - name: netwr
+            description: Header net amount.
+          - name: _batch_id
+            description: Local ingestion batch identifier.
+          - name: _source_table
+            description: Original source table name.
+          - name: _loaded_at
+            description: Local load timestamp.
+          - name: _file_name
+            description: Local source file name.
 
       - name: raw_sap_vbap
-        description: Sales order item records.
+        description: Sales order item records. Item uniqueness is expected by client, sales document number, and item number.
         columns:
+          - name: mandt
+            description: SAP-like client identifier.
+            tests:
+              - not_null
           - name: vbeln
             description: Sales document number.
             tests:
@@ -51,3 +126,23 @@ sources:
             description: Material number.
             tests:
               - not_null
+          - name: kwmeng
+            description: Order quantity.
+          - name: vrkme
+            description: Sales unit of measure.
+          - name: waerk
+            description: Item currency.
+          - name: netwr
+            description: Item net amount.
+          - name: erdat
+            description: Record creation date.
+          - name: aedat
+            description: Record change date.
+          - name: _batch_id
+            description: Local ingestion batch identifier.
+          - name: _source_table
+            description: Original source table name.
+          - name: _loaded_at
+            description: Local load timestamp.
+          - name: _file_name
+            description: Local source file name.

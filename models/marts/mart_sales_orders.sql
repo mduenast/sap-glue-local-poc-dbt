@@ -15,6 +15,7 @@ materials as (
 )
 
 select
+    sales_items.client_id,
     sales_items.sales_order_id,
     sales_items.sales_order_item_id,
     sales_headers.order_date,
@@ -37,7 +38,10 @@ select
 from sales_items
 left join sales_headers
     on sales_items.sales_order_id = sales_headers.sales_order_id
+    and sales_items.client_id = sales_headers.client_id
 left join customers
     on sales_headers.customer_id = customers.customer_id
+    and sales_headers.client_id = customers.client_id
 left join materials
     on sales_items.material_id = materials.material_id
+    and sales_items.client_id = materials.client_id

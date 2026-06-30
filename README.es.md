@@ -2,7 +2,7 @@
 
 Capa mínima de transformación dbt para una prueba de concepto local con datos tipo SAP. Este repositorio contiene únicamente el proyecto dbt que modela tablas raw ya cargadas en una base de datos local DuckDB.
 
-El proyecto es genérico y apto para uso público. No incluye extractor, emulador de AWS, planificador, orquestador ni integración productiva.
+El proyecto es genérico y apto para uso público. No incluye extractor, emulador de AWS, planificador, orquestador, configuración de Snowflake ni integración productiva.
 
 ## Qué hace este proyecto
 
@@ -37,51 +37,69 @@ pip install dbt-duckdb
 
 ## Configurar el perfil
 
-Copia el perfil de ejemplo y ajusta la ruta del fichero DuckDB si hace falta:
+Copia el perfil de ejemplo y ajusta la ruta de DuckDB mediante `DUCKDB_PATH` si hace falta:
 
 ```bash
 cp profiles.yml.example profiles.yml
+export DUCKDB_PATH=./data/sap_glue_local_poc.duckdb
 ```
 
-Por defecto, el perfil de ejemplo apunta a:
+El perfil de ejemplo usa esta configuración:
 
-```text
-./data/sap_glue_local_poc.duckdb
+```yaml
+path: "{{ env_var('DUCKDB_PATH', './data/sap_glue_local_poc.duckdb') }}"
 ```
 
-Puedes ejecutar dbt usando el perfil local:
+`profiles.yml` es un fichero local y no debe versionarse. También puedes copiar el perfil `sap_glue_local_poc` al directorio estándar de perfiles de dbt en vez de mantener un perfil local.
+
+## Ejecutar dbt
+
+Asumiendo que el fichero DuckDB ya existe y contiene las tablas raw esperadas:
 
 ```bash
 dbt debug --profiles-dir .
 dbt deps --profiles-dir .
 dbt parse --profiles-dir .
+dbt build --profiles-dir .
+```
+
+Para separar ejecución y tests:
+
+```bash
 dbt run --profiles-dir .
 dbt test --profiles-dir .
 ```
 
-También puedes copiar el perfil `sap_glue_local_poc` al directorio estándar de perfiles de dbt.
+## Columnas raw esperadas
 
-## Estructura del proyecto
+El fichero DuckDB debe ser generado por el repositorio de laboratorio. Los modelos staging esperan estos esquemas raw.
+
+`raw_sap_mara`:
 
 ```text
-models/
-  sources.yml
-  staging/
-    stg_sap__mara.sql
-    stg_sap__kna1.sql
-    stg_sap__vbak.sql
-    stg_sap__vbap.sql
-  marts/
-    mart_sales_orders.sql
+mandt, matnr, mtart, matkl, meins, ersda, erdat, aedat,
+_batch_id, _source_table, _loaded_at, _file_name
 ```
 
-## Esquema raw asumido
+`raw_sap_kna1`:
 
-Los modelos staging asumen nombres de columna habituales en datos tipo SAP:
+```text
+mandt, kunnr, name1, land1, ort01, erdat, aedat,
+_batch_id, _source_table, _loaded_at, _file_name
+```
 
-- `raw_sap_mara`: `matnr`, `mtart`, `matkl`, `meins`, `ersda`
-- `raw_sap_kna1`: `kunnr`, `name1`, `land1`, `ort01`
-- `raw_sap_vbak`: `vbeln`, `kunnr`, `audat`, `auart`, `vkorg`, `netwr`, `waerk`
-- `raw_sap_vbap`: `vbeln`, `posnr`, `matnr`, `kwmeng`, `vrkme`, `netwr`, `waerk`
+`raw_sap_vbak`:
 
-Ajusta los modelos staging si el extractor raw emite nombres de columna distintos.
+```text
+mandt, vbeln, kunnr, audat, auart, vkorg, erdat, aedat,
+waers, waerk, netwr, _batch_id, _source_table, _loaded_at, _file_name
+```
+
+`raw_sap_vbap`:
+
+```text
+mandt, vbeln, posnr, matnr, kwmeng, vrkme, waerk, netwr,
+erdat, aedat, _batch_id, _source_table, _loaded_at, _file_name
+```
+
+Ajusta los modelos staging solo si cambia el contrato de las tablas raw.

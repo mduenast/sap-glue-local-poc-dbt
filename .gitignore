@@ -15,4 +15,5 @@ profiles.yml
 data/
 
 .DS_Store
+__MACOSX/
 .idea/

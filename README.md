@@ -2,7 +2,7 @@
 
 Minimal dbt transformation layer for a local SAP-like data extraction proof of concept. This repository contains only the dbt project that models raw tables already loaded into a local DuckDB database.
 
-This project is intentionally generic and public-safe. It does not include an extractor, AWS emulator, scheduler, orchestrator, or any production integration.
+This project is intentionally generic and public-safe. It does not include an extractor, AWS emulator, scheduler, orchestrator, Snowflake configuration, or any production integration.
 
 ## What this project does
 
@@ -37,51 +37,69 @@ pip install dbt-duckdb
 
 ## Configure the profile
 
-Copy the example profile and adjust the DuckDB file path if needed:
+Copy the example profile and adjust the DuckDB path through `DUCKDB_PATH` if needed:
 
 ```bash
 cp profiles.yml.example profiles.yml
+export DUCKDB_PATH=./data/sap_glue_local_poc.duckdb
 ```
 
-By default, the example profile points to:
+The example profile uses this setting:
 
-```text
-./data/sap_glue_local_poc.duckdb
+```yaml
+path: "{{ env_var('DUCKDB_PATH', './data/sap_glue_local_poc.duckdb') }}"
 ```
 
-You can run dbt with the local profile file:
+`profiles.yml` is a local file and should not be committed. You can also copy the `sap_glue_local_poc` profile into your standard dbt profiles directory instead of keeping a local profile file.
+
+## Run dbt
+
+Assuming the DuckDB file already exists and contains the expected raw tables:
 
 ```bash
 dbt debug --profiles-dir .
 dbt deps --profiles-dir .
 dbt parse --profiles-dir .
+dbt build --profiles-dir .
+```
+
+For separate run and test steps:
+
+```bash
 dbt run --profiles-dir .
 dbt test --profiles-dir .
 ```
 
-Alternatively, copy the `sap_glue_local_poc` profile into your standard dbt profiles directory.
+## Expected raw columns
 
-## Project layout
+The DuckDB file is expected to be produced by the lab repository. The staging models expect these raw schemas.
+
+`raw_sap_mara`:
 
 ```text
-models/
-  sources.yml
-  staging/
-    stg_sap__mara.sql
-    stg_sap__kna1.sql
-    stg_sap__vbak.sql
-    stg_sap__vbap.sql
-  marts/
-    mart_sales_orders.sql
+mandt, matnr, mtart, matkl, meins, ersda, erdat, aedat,
+_batch_id, _source_table, _loaded_at, _file_name
 ```
 
-## Assumed raw schema
+`raw_sap_kna1`:
 
-The staging models assume common SAP-like column names:
+```text
+mandt, kunnr, name1, land1, ort01, erdat, aedat,
+_batch_id, _source_table, _loaded_at, _file_name
+```
 
-- `raw_sap_mara`: `matnr`, `mtart`, `matkl`, `meins`, `ersda`
-- `raw_sap_kna1`: `kunnr`, `name1`, `land1`, `ort01`
-- `raw_sap_vbak`: `vbeln`, `kunnr`, `audat`, `auart`, `vkorg`, `netwr`, `waerk`
-- `raw_sap_vbap`: `vbeln`, `posnr`, `matnr`, `kwmeng`, `vrkme`, `netwr`, `waerk`
+`raw_sap_vbak`:
 
-Adjust the staging models if the raw extractor emits different column names.
+```text
+mandt, vbeln, kunnr, audat, auart, vkorg, erdat, aedat,
+waers, waerk, netwr, _batch_id, _source_table, _loaded_at, _file_name
+```
+
+`raw_sap_vbap`:
+
+```text
+mandt, vbeln, posnr, matnr, kwmeng, vrkme, waerk, netwr,
+erdat, aedat, _batch_id, _source_table, _loaded_at, _file_name
+```
+
+Adjust the staging models only if the raw table contract changes.

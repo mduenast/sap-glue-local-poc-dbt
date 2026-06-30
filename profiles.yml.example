@@ -3,5 +3,5 @@ sap_glue_local_poc:
   outputs:
     dev:
       type: duckdb
-      path: ./data/sap_glue_local_poc.duckdb
+      path: "{{ env_var('DUCKDB_PATH', './data/sap_glue_local_poc.duckdb') }}"
       threads: 4
