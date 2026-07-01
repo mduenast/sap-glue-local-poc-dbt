@@ -30,6 +30,9 @@ This project is intentionally generic and public-safe. It does not include an ex
 
 ```bash
 make setup
+cp profiles.yml.example profiles.yml
+make doctor
+make parse
 ```
 
 `make setup` creates `.venv` if needed, upgrades `pip`, and installs the Python packages from `requirements.txt`. dbt is installed inside `.venv`; a global dbt installation is not required.
@@ -50,6 +53,8 @@ path: "{{ env_var('DUCKDB_PATH', './data/sap_glue_local_poc.duckdb') }}"
 ```
 
 `profiles.yml` is a local file and should not be committed. You can also copy the `sap_glue_local_poc` profile into your standard dbt profiles directory instead of keeping a local profile file.
+
+Run `make doctor` after creating the profile to check local readiness. It verifies Python 3, the local `.venv/bin/dbt` executable, `profiles.yml`, and whether `DUCKDB_PATH` is set.
 
 ## Run dbt
 
