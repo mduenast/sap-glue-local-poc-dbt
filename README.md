@@ -26,14 +26,13 @@ This project is intentionally generic and public-safe. It does not include an ex
   - `raw_sap_vbak`
   - `raw_sap_vbap`
 
-## Install dbt with DuckDB support
+## Set up local dbt
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install dbt-duckdb
+make setup
 ```
+
+`make setup` creates `.venv` if needed, upgrades `pip`, and installs the Python packages from `requirements.txt`. dbt is installed inside `.venv`; a global dbt installation is not required.
 
 ## Configure the profile
 
@@ -57,17 +56,16 @@ path: "{{ env_var('DUCKDB_PATH', './data/sap_glue_local_poc.duckdb') }}"
 Assuming the DuckDB file already exists and contains the expected raw tables:
 
 ```bash
-dbt debug --profiles-dir .
-dbt deps --profiles-dir .
-dbt parse --profiles-dir .
-dbt build --profiles-dir .
+make parse
+make build
 ```
 
-For separate run and test steps:
+`make parse`, `make build`, and `make test` all use `.venv/bin/dbt` with `--profiles-dir .`. `make build` respects `DUCKDB_PATH` when it is set because the example profile reads that environment variable.
+
+For tests only:
 
 ```bash
-dbt run --profiles-dir .
-dbt test --profiles-dir .
+make test
 ```
 
 ## Expected raw columns

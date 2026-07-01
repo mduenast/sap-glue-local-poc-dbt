@@ -26,14 +26,13 @@ El proyecto es genérico y apto para uso público. No incluye extractor, emulado
   - `raw_sap_vbak`
   - `raw_sap_vbap`
 
-## Instalar dbt con soporte DuckDB
+## Preparar dbt local
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install dbt-duckdb
+make setup
 ```
+
+`make setup` crea `.venv` si hace falta, actualiza `pip` e instala los paquetes Python desde `requirements.txt`. dbt se instala dentro de `.venv`; no hace falta una instalación global de dbt.
 
 ## Configurar el perfil
 
@@ -57,17 +56,16 @@ path: "{{ env_var('DUCKDB_PATH', './data/sap_glue_local_poc.duckdb') }}"
 Asumiendo que el fichero DuckDB ya existe y contiene las tablas raw esperadas:
 
 ```bash
-dbt debug --profiles-dir .
-dbt deps --profiles-dir .
-dbt parse --profiles-dir .
-dbt build --profiles-dir .
+make parse
+make build
 ```
 
-Para separar ejecución y tests:
+`make parse`, `make build` y `make test` usan `.venv/bin/dbt` con `--profiles-dir .`. `make build` respeta `DUCKDB_PATH` cuando está definido porque el perfil de ejemplo lee esa variable de entorno.
+
+Para ejecutar solo los tests:
 
 ```bash
-dbt run --profiles-dir .
-dbt test --profiles-dir .
+make test
 ```
 
 ## Columnas raw esperadas
